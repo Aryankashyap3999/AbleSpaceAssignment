@@ -20,8 +20,16 @@ export const isAuthenticated = async (
   next: NextFunction
 ) => {
   try {
-    // Try to get token from HttpOnly cookie first, then fall back to header
-    const token = (req.cookies?.token as string) || (req.headers['x-access-token'] as string);
+    // Try to get token from HttpOnly cookie first, then from Authorization header
+    let token = req.cookies?.token as string;
+    
+    if (!token) {
+      // Try Authorization header (Bearer token format)
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      if (authHeader && typeof authHeader === 'string') {
+        token = authHeader.replace('Bearer ', '');
+      }
+    }
 
     if (!token) {
       throw new ForbiddenError('No auth token provided');
