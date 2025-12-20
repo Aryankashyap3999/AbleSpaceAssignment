@@ -73,9 +73,14 @@ app.use(appErrorHandler);
 app.use(genericErrorHandler);
 
 
-httpServer.listen(serverConfig.PORT, async () => {
+httpServer.listen(serverConfig.PORT, () => {
     logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
     logger.info(`WebSocket server is ready for connections`);
     logger.info(`Press Ctrl+C to stop the server.`);
-    await connectDB()
+});
+
+// Connect to database after server starts listening
+connectDB().catch((error) => {
+    logger.error("Failed to start server due to database connection error", { error });
+    process.exit(1);
 });
