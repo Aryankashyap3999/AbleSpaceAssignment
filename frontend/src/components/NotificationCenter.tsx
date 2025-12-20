@@ -32,7 +32,7 @@ export const NotificationCenter = () => {
         clearTimeout(timerRef.current);
       }
     };
-  }, [notifications[0]?.id]); // Only depend on the first notification's ID
+  }, [notifications]);
 
   const handleClose = useCallback(() => {
     setShowPanel(false);

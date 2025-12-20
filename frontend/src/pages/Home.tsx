@@ -91,7 +91,7 @@ export const Home = () => {
   const overdueTasks = allTasks.filter(t => new Date(t.dueDate) < new Date() && t.status !== 'completed').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -102,7 +102,7 @@ export const Home = () => {
           <div className="flex gap-4">
             <button
               onClick={() => navigate('/tasks/new')}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
             >
               <Plus className="w-5 h-5" />
               New Task
