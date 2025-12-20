@@ -31,7 +31,9 @@ export const SigninContainer = () => {
   }
 
   useEffect(() => {
+    console.log('isSuccess changed:', isSuccess);
     if (isSuccess) {
+      console.log('Navigating to /home');
       navigate('/home');
     }
   }, [isSuccess, navigate]);

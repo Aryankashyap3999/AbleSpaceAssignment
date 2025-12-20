@@ -13,7 +13,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  if (!auth.user || !auth.token) {
+  // Only check for user, since token is in HttpOnly cookie (not in state)
+  if (!auth.user) {
     return <Navigate to="/" />;
   }
 

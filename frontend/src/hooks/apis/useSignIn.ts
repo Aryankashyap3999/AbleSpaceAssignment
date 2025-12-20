@@ -20,6 +20,7 @@ export const useSignIn = (): UseMutationResult<
   return useMutation({
     mutationFn: signInRequest,
     onSuccess: (response) => {
+      console.log('Sign in successful, response:', response);
       toast.success('Successfully signed in');
 
       // Store only user data in localStorage, token is in HttpOnly cookie
@@ -32,6 +33,7 @@ export const useSignIn = (): UseMutationResult<
       });
     },
     onError: (error) => {
+      console.log('Sign in error:', error);
       toast.error(error.response?.data?.message || 'Error, signin failed');
     },
   });
