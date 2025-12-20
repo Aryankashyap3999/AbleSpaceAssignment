@@ -2,6 +2,8 @@ import { Response } from "express";
 import { TaskService } from "../services/task.service";
 import { TaskRepository } from "../repositories/task.repository";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
+import { TASK_EVENTS } from "../utils/common/socketEvents";
+import { emitTaskUpdate, sendAssignmentNotification } from "./task.socket.controller";
 
 const taskRepository = new TaskRepository();
 const taskService = new TaskService(taskRepository);
@@ -12,6 +14,16 @@ export const TaskController = {
       req.body,
       req.user as string
     );
+
+    // Emit task created event to all connected clients
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_CREATED, task);
+      
+      // Send notification if task is assigned
+      if (task.assignedToId) {
+        sendAssignmentNotification(req.io, task.assignedToId.toString(), task);
+      }
+    }
 
     res.status(201).json({
       message: 'Task created successfully',
@@ -38,6 +50,16 @@ export const TaskController = {
 
     const task = await taskService.updateTask(taskId, updates, req.user as string);
 
+    // Emit task updated event to all connected clients
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_UPDATED, task);
+      
+      // If assignee changed, send notification to new assignee
+      if (updates.assignedToId && updates.assignedToId !== task.assignedToId) {
+        sendAssignmentNotification(req.io, updates.assignedToId, task);
+      }
+    }
+
     res.status(200).json({
       message: 'Task updated successfully',
       data: task,
@@ -49,6 +71,11 @@ export const TaskController = {
     const { taskId } = req.params;
 
     await taskService.deleteTask(taskId);
+
+    // Emit task deleted event to all connected clients
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_DELETED, { taskId });
+    }
 
     res.status(200).json({
       message: 'Task deleted successfully',
@@ -81,7 +108,12 @@ export const TaskController = {
     const { taskId } = req.params;
     const { userId } = req.body;
 
-    const task = await taskService.addCollaborator(taskId, userId, req.user as string);
+    const task = await taskService.addCollaborator(taskId, userId);
+
+    // Emit update event
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_UPDATED, task);
+    }
 
     res.status(200).json({
       message: 'Collaborator added successfully',
@@ -94,7 +126,12 @@ export const TaskController = {
     const { taskId } = req.params;
     const { userId } = req.body;
 
-    const task = await taskService.removeCollaborator(taskId, userId, req.user as string);
+    const task = await taskService.removeCollaborator(taskId, userId);
+
+    // Emit update event
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_UPDATED, task);
+    }
 
     res.status(200).json({
       message: 'Collaborator removed successfully',
@@ -107,7 +144,12 @@ export const TaskController = {
     const { taskId } = req.params;
     const { status } = req.body;
 
-    const task = await taskService.updateTaskStatus(taskId, status, req.user as string);
+    const task = await taskService.updateTaskStatus(taskId, status);
+
+    // Emit status changed event
+    if (req.io) {
+      emitTaskUpdate(req.io, TASK_EVENTS.TASK_STATUS_CHANGED, task);
+    }
 
     res.status(200).json({
       message: 'Task status updated successfully',

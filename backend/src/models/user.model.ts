@@ -5,6 +5,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     username: string;
+    name: string;
     avatar: string;
     isVerified: boolean;
     verificationToken: string;
@@ -35,6 +36,10 @@ const userSchema = new mongoose.Schema<IUser>(
                 /^[a-zA-Z0-9]+$/,
                 'Username must contain only letters and numbers'
             ]
+        },
+        name: {
+            type: String,
+            required: [true, 'Name is required']
         },
         avatar: {
             type: String

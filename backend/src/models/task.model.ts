@@ -3,13 +3,14 @@ import mongoose, { Schema, Document } from "mongoose";
 export enum Priority {
     LOW = 'low',
     MEDIUM = 'medium',
-    HIGH = 'high'
+    HIGH = 'high',
+    URGENT = 'urgent'
 }
 
 export enum Status {
     IN_PROGRESS = 'in_progress',
     COMPLETED = 'completed',
-    TO_DO = 'to_do',
+    TODO = 'todo',
     REVIEW = 'review'
 }
 
@@ -45,7 +46,7 @@ const taskSchema = new Schema<ITask>({
     status: {
         type: String,
         enum: Object.values(Status),
-        default: Status.TO_DO
+        default: Status.TODO
     },
     createdById: {
         type: String,
@@ -54,8 +55,7 @@ const taskSchema = new Schema<ITask>({
     },
     assignedToId: {
         type: String,
-        ref: 'User',
-        required: [true, 'Assignee user ID is required']
+        ref: 'User'
     },
     collaborators: {
         type: [String],

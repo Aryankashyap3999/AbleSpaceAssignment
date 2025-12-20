@@ -20,7 +20,8 @@ export const isAuthenticated = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers['x-access-token'] as string;
+    // Try to get token from HttpOnly cookie first, then fall back to header
+    const token = (req.cookies?.token as string) || (req.headers['x-access-token'] as string);
 
     if (!token) {
       throw new ForbiddenError('No auth token provided');
@@ -74,3 +75,8 @@ export const isAuthenticated = async (
     });
   }
 };
+
+export const AuthMiddleware = {
+  verifyToken: isAuthenticated
+};
+
