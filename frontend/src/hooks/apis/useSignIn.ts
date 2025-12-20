@@ -23,12 +23,15 @@ export const useSignIn = (): UseMutationResult<
       console.log('Sign in successful, response:', response);
       toast.success('Successfully signed in');
 
-      // Store only user data in localStorage, token is in HttpOnly cookie
+      // Store user data and token in localStorage for Authorization header
       localStorage.setItem('user', JSON.stringify(response.data));
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
 
       setAuth({
         user: response.data,
-        token: null, // Token is now in HttpOnly cookie, not in state
+        token: null,
         isLoading: false,
       });
     },

@@ -21,7 +21,7 @@ export const ProblemController = {
             path: '/'
         });
 
-        // Return user data WITHOUT token in body (token is in HttpOnly cookie)
+        // Return user data and token in body (for cross-domain support)
         res.status(201).json({
             message: 'User registered successfully',
             data: {
@@ -30,6 +30,7 @@ export const ProblemController = {
                 name: user.name,
                 username: user.username
             },
+            token: user.token,
             success: true
         });
     },
@@ -46,7 +47,7 @@ export const ProblemController = {
             path: '/'
         });
 
-        // Return user data WITHOUT token in body (token is in HttpOnly cookie)
+        // Return user data and token in body (for cross-domain support)
         res.status(200).json({
             message: 'User signed in successfully',
             data: {
@@ -55,6 +56,7 @@ export const ProblemController = {
                 name: user.name,
                 username: user.username
             },
+            token: user.token,
             success: true
         });
     },

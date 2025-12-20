@@ -17,6 +17,7 @@ export interface AuthApiResponse {
     name: string;
     username: string;
   };
+  token?: string;
   success: boolean;
   message: string;
 }
